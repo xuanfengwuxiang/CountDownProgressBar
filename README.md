@@ -5,6 +5,13 @@
 
 使用：
 
+allprojects {
+		repositories {
+			...
+			maven { url 'https://www.jitpack.io' }
+		}
+	}
+
 implementation 'com.github.xuanfengwuxiang:CountDownProgressBar:1.0'
 
 
