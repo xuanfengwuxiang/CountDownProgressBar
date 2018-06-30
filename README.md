@@ -7,4 +7,5 @@
 
 implementation 'com.github.xuanfengwuxiang:CountDownProgressBar:1.0'
 
-https://github.com/xuanfengwuxiang/CountDownProgressBar/tree/master/photo/demo.jpg
+
+![控件样子](https://github.com/xuanfengwuxiang/CountDownProgressBar/tree/master/photo/demo.jpg)
