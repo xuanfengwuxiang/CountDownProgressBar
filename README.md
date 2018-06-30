@@ -12,7 +12,7 @@ allprojects {
 		}
 	}
 
-implementation 'com.github.xuanfengwuxiang:CountDownProgressBar:1.0'
+implementation 'com.github.xuanfengwuxiang:CountDownProgressBar:1.1'
 
 
-![控件样子](https://github.com/xuanfengwuxiang/CountDownProgressBar/blob/master/photo/demo.jpg)
+![控件样子](https://github.com/xuanfengwuxiang/CountDownProgressBar/blob/master/photo/demo.png)
