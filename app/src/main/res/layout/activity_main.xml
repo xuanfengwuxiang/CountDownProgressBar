@@ -10,7 +10,7 @@
     tools:context="com.xuanfeng.countdownprogressbar.MainActivity">
 
     <com.xuanfeng.countdownprogressview.CountDownProgressBar
-        app:text_ring_space="5dp"
+        app:text_ring_space="0dp"
         android:background="#ffff00"
         android:id="@+id/count_down"
         app:progress_width="5dp"

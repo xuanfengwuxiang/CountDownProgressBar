@@ -22,19 +22,26 @@ import android.view.animation.LinearInterpolator;
 public class CountDownProgressBar extends View {
 
     private Context mContext;
-    private int mDefaultRingColor;//默认圆环的颜色
-    private float mDefaultRingWidth;//默认圆环的宽度
+    //圆环参数
+    private int mDefaultRingColor;//圆环颜色
+    private float mDefaultRingWidth;//圆环宽度
+    //进度条参数
     private int mProgressColor;//进度条颜色
     private float mProgressWidth;//进度条宽度
+    private int mSweepAngle;//当前弧的角度
+    //文字参数
     private float mTextSize;//文字大小
     private int mTextColor;//文字颜色
+    //其他
     private int mCountDownTime;//倒计时时间
+    private final String unit = "s";//倒计时单位
+    private float mTextRingSpace;//文字与圆圈的留白
+    private OnCountDownFinishListener mOnCountDownFinishListener;//计时结束监听器
+    //画笔
     private Paint mDefaultRingPaint;
     private Paint mProgressPaint;
     private Paint mTextPaint;
-    private int mSweepAngle;//当前弧的角度
-    private OnCountDownFinishListener mOnCountDownFinishListener;//计时结束监听器
-    private float mTextRingSpace;//文字与圆圈的留白
+
 
     public CountDownProgressBar(Context context) {
         this(context, null);
@@ -49,10 +56,6 @@ public class CountDownProgressBar extends View {
         mContext = context;
         getAttributes(attrs);
         init();
-    }
-
-    private void init() {
-        initPaint();
     }
 
     //获取自定义属性
@@ -73,9 +76,13 @@ public class CountDownProgressBar extends View {
         typedArray.recycle();
     }
 
+    private void init() {
+        initPaint();
+    }
+
     //初始化画笔
     private void initPaint() {
-        //默认圆环
+        //圆环画笔
         mDefaultRingPaint = new Paint();
         mDefaultRingPaint.setAntiAlias(true);
         mDefaultRingPaint.setDither(true);
@@ -83,26 +90,26 @@ public class CountDownProgressBar extends View {
         mDefaultRingPaint.setStrokeWidth(mDefaultRingWidth);
         mDefaultRingPaint.setColor(mDefaultRingColor);
 
-        //进度条
+        //进度条画笔
         mProgressPaint = new Paint();
         mProgressPaint.setAntiAlias(true);
-        mProgressPaint.setDither(true);
+        mProgressPaint.setDither(true);//防抖动
         mProgressPaint.setStyle(Paint.Style.STROKE);
         mProgressPaint.setStrokeWidth(mProgressWidth);
         mProgressPaint.setColor(mProgressColor);
-        mProgressPaint.setStrokeCap(Paint.Cap.ROUND);
+        mProgressPaint.setStrokeCap(Paint.Cap.ROUND);//线帽
 
         //文字画笔
         mTextPaint = new Paint();
         mTextPaint.setAntiAlias(true);
         mTextPaint.setDither(true);
-        mTextPaint.setStyle(Paint.Style.FILL);
+        mTextPaint.setStyle(Paint.Style.FILL);//填充内部
         mTextPaint.setColor(mTextColor);
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setTextAlign(Paint.Align.CENTER);//x坐标中间开始画
     }
 
-    @Override
+    @Override//Tip-------onMeasure只需要处理wrap_content这种情况。match_parent、具体宽高这2种情况交给super处理就好。
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //测量模式
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -126,7 +133,7 @@ public class CountDownProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.save();
+        canvas.save();//canvas初始状态保存
         canvas.translate(getPaddingLeft(), getPaddingTop());
 
         //画默认圆
@@ -136,7 +143,7 @@ public class CountDownProgressBar extends View {
         canvas.drawCircle(centerX, centerY, defaultRingRadius, mDefaultRingPaint);
 
         //画文字
-        String text = mCountDownTime - (int) (mSweepAngle / 360f * mCountDownTime) + "s";
+        String text = mCountDownTime - (int) (mSweepAngle / 360f * mCountDownTime) + unit;
         float baseX = centerX;
         float baseLine = centerY + (mTextPaint.descent() - mTextPaint.ascent()) / 2 - mTextPaint.descent();
         canvas.drawText(text, baseX, baseLine, mTextPaint);
@@ -145,12 +152,12 @@ public class CountDownProgressBar extends View {
         RectF rectF = new RectF(mProgressWidth / 2, mProgressWidth / 2, centerX * 2 - mProgressWidth / 2, centerY * 2 - mProgressWidth / 2);
         canvas.drawArc(rectF, -90, mSweepAngle, false, mProgressPaint);
 
-        canvas.restore();
+        canvas.restore();//canvas初始状态恢复
     }
 
     //获取文字宽高的最大值
     private float getTextMaxLength() {
-        float textWidth = mTextPaint.measureText(mCountDownTime + "s");//文字宽
+        float textWidth = mTextPaint.measureText(mCountDownTime + unit);//文字宽
         float textHeight = mTextPaint.descent() - mTextPaint.ascent();//文字高
         return Math.max(textWidth, textHeight);
     }
@@ -160,12 +167,11 @@ public class CountDownProgressBar extends View {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                float i = Float.valueOf(String.valueOf(animation.getAnimatedValue()));
-                mSweepAngle = (int) (360 * (i / 100f));
+                float value = (float) animation.getAnimatedValue();
+                mSweepAngle = (int) (360 * (value / 100f));
                 invalidate();
             }
         });
-        valueAnimator.start();
         valueAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -176,6 +182,7 @@ public class CountDownProgressBar extends View {
             }
 
         });
+        valueAnimator.start();
     }
 
     private ValueAnimator getValueAnimator(long countdownTime) {
