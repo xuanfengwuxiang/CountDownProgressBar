@@ -197,6 +197,10 @@ public class CountDownProgressBar extends View {
         mOnCountDownFinishListener = onCountDownFinishListener;
     }
 
+    public void removeOnCountDownFinishListener() {
+        mOnCountDownFinishListener = null;
+    }
+
     public void setDefaultRingColor(int defaultRingColor) {
         mDefaultRingColor = defaultRingColor;
     }

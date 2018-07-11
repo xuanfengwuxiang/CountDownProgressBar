@@ -20,6 +20,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         count_down.startCountDown();
-
+        count_down.removeOnCountDownFinishListener();
     }
 }
