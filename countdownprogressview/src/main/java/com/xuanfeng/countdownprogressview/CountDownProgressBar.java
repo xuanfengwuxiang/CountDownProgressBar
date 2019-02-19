@@ -28,7 +28,7 @@ public class CountDownProgressBar extends View {
     //进度条参数
     private int mProgressColor;//进度条颜色
     private float mProgressWidth;//进度条宽度
-    private int mSweepAngle;//当前弧的角度
+    private float mProgressValue;//倒计时进度数值
     //文字参数
     private float mTextSize;//文字大小
     private int mTextColor;//文字颜色
@@ -143,14 +143,14 @@ public class CountDownProgressBar extends View {
         canvas.drawCircle(centerX, centerY, defaultRingRadius, mDefaultRingPaint);
 
         //画文字
-        String text = mCountDownTime - (int) (mSweepAngle / 360f * mCountDownTime) + unit;
+        String text = mCountDownTime - (int) (mProgressValue / 100f * mCountDownTime) + unit;
         float baseX = centerX;
         float baseLine = centerY + (mTextPaint.descent() - mTextPaint.ascent()) / 2 - mTextPaint.descent();
         canvas.drawText(text, baseX, baseLine, mTextPaint);
 
         //画进度圆弧
         RectF rectF = new RectF(mProgressWidth / 2, mProgressWidth / 2, centerX * 2 - mProgressWidth / 2, centerY * 2 - mProgressWidth / 2);
-        canvas.drawArc(rectF, -90, mSweepAngle, false, mProgressPaint);
+        canvas.drawArc(rectF, -90, 360 * (mProgressValue / 100f), false, mProgressPaint);
 
         canvas.restore();//canvas初始状态恢复
     }
@@ -167,8 +167,7 @@ public class CountDownProgressBar extends View {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (float) animation.getAnimatedValue();
-                mSweepAngle = (int) (360 * (value / 100f));
+                mProgressValue = (float) animation.getAnimatedValue();
                 invalidate();
             }
         });
@@ -193,40 +192,48 @@ public class CountDownProgressBar extends View {
         return valueAnimator;
     }
 
-    public void setOnCountDownFinishListener(OnCountDownFinishListener onCountDownFinishListener) {
+    public CountDownProgressBar setOnCountDownFinishListener(OnCountDownFinishListener onCountDownFinishListener) {
         mOnCountDownFinishListener = onCountDownFinishListener;
+        return this;
     }
 
     public void removeOnCountDownFinishListener() {
         mOnCountDownFinishListener = null;
     }
 
-    public void setDefaultRingColor(int defaultRingColor) {
+    public CountDownProgressBar setDefaultRingColor(int defaultRingColor) {
         mDefaultRingColor = defaultRingColor;
+        return this;
     }
 
-    public void setDefaultRingWidth(float defaultRingWidth) {
+    public CountDownProgressBar setDefaultRingWidth(float defaultRingWidth) {
         mDefaultRingWidth = defaultRingWidth;
+        return this;
     }
 
-    public void setProgressColor(int progressColor) {
+    public CountDownProgressBar setProgressColor(int progressColor) {
         mProgressColor = progressColor;
+        return this;
     }
 
-    public void setProgressWidth(float progressWidth) {
+    public CountDownProgressBar setProgressWidth(float progressWidth) {
         mProgressWidth = progressWidth;
+        return this;
     }
 
-    public void setTextSize(float textSize) {
+    public CountDownProgressBar setTextSize(float textSize) {
         mTextSize = textSize;
+        return this;
     }
 
-    public void setTextColor(int textColor) {
+    public CountDownProgressBar setTextColor(int textColor) {
         mTextColor = textColor;
+        return this;
     }
 
-    public void setCountDownTime(int countDownTime) {
+    public CountDownProgressBar setCountDownTime(int countDownTime) {
         mCountDownTime = countDownTime;
+        return this;
     }
 
     public int sp2px(Context context, float spVal) {
